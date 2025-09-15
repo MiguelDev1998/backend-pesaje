@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const connection = require('../models/db');
 
-// Crear nueva partida
+// Crear nueva partida (siempre entra como abierta: cerrada = 0)
 router.post('/', (req, res) => {
   const { partida, origen, bache, producto, proceso, responsable } = req.body;
 
   const sql = `
-    INSERT INTO partidas (partida, origen, bache, producto, proceso, responsable)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO partidas (partida, origen, bache, producto, proceso, responsable, cerrada)
+    VALUES (?, ?, ?, ?, ?, ?, 0)
   `;
 
   connection.query(
@@ -24,7 +24,7 @@ router.post('/', (req, res) => {
   );
 });
 
-// Listar partidas
+// Listar partidas (normalizando cerrada a boolean)
 router.get('/', (req, res) => {
   connection.query('SELECT * FROM partidas', (err, rows) => {
     if (err) {
@@ -32,7 +32,7 @@ router.get('/', (req, res) => {
       return res.status(500).json({ error: 'Error al consultar partidas', details: err });
     }
 
-    // 👇 Normalizar cerrada como boolean (0 → false, 1 → true)
+    // Normalizar cerrada: 0 → false, 1 → true
     const partidas = rows.map(p => ({
       ...p,
       cerrada: p.cerrada === 1
@@ -76,7 +76,7 @@ router.put('/:id/cerrar', (req, res) => {
         return res.json({ message: '🗑️ Partida eliminada porque no tenía pesos' });
       });
     } else {
-      // Sí tiene pesos → marcar cerrada
+      // Sí tiene pesos → marcar cerrada = 1
       connection.query('UPDATE partidas SET cerrada = 1 WHERE id = ?', [id], (err3) => {
         if (err3) {
           console.error('❌ Error al cerrar partida:', err3);
