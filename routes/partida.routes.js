@@ -24,7 +24,7 @@ router.post('/', (req, res) => {
   );
 });
 
-// Listar partidas (normalizando cerrada a boolean)
+// Listar partidas
 router.get('/', (req, res) => {
   connection.query('SELECT * FROM partidas', (err, rows) => {
     if (err) {
@@ -32,10 +32,10 @@ router.get('/', (req, res) => {
       return res.status(500).json({ error: 'Error al consultar partidas', details: err });
     }
 
-    // Normalizar cerrada: 0 → false, 1 → true
+    // Normalizar cerrada como boolean (0, '0' → false | 1, '1' → true)
     const partidas = rows.map(p => ({
       ...p,
-      cerrada: p.cerrada === 1
+      cerrada: p.cerrada == 1
     }));
 
     res.json(partidas);
@@ -55,34 +55,59 @@ router.delete('/:id', (req, res) => {
   });
 });
 
-// Cerrar turno o borrar si no tiene pesos
+// Alternar turno (cerrar/abrir) o borrar si no tiene pesos
 router.put('/:id/cerrar', (req, res) => {
   const { id } = req.params;
 
-  // Verificar si la partida tiene pesos asociados
-  connection.query('SELECT * FROM pesos WHERE partida_id = ?', [id], (err, rows) => {
+  // Verificar estado actual de la partida
+  connection.query('SELECT cerrada FROM partidas WHERE id = ?', [id], (err, result) => {
     if (err) {
-      console.error('❌ Error al verificar pesos:', err);
-      return res.status(500).json({ error: 'Error al verificar pesos', details: err });
+      console.error('❌ Error al consultar partida:', err);
+      return res.status(500).json({ error: 'Error al consultar partida', details: err });
     }
 
-    if (rows.length === 0) {
-      // No tiene pesos → eliminar
-      connection.query('DELETE FROM partidas WHERE id = ?', [id], (err2) => {
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'Partida no encontrada' });
+    }
+
+    const estadoActual = result[0].cerrada;
+
+    if (estadoActual == 1) {
+      // 🔓 Si está cerrada → reabrir
+      connection.query('UPDATE partidas SET cerrada = 0 WHERE id = ?', [id], (err2) => {
         if (err2) {
-          console.error('❌ Error al borrar partida sin pesos:', err2);
-          return res.status(500).json({ error: 'Error al borrar partida', details: err2 });
+          console.error('❌ Error al abrir partida:', err2);
+          return res.status(500).json({ error: 'Error al abrir partida', details: err2 });
         }
-        return res.json({ message: '🗑️ Partida eliminada porque no tenía pesos' });
+        return res.json({ message: '🔓 Partida reabierta correctamente' });
       });
     } else {
-      // Sí tiene pesos → marcar cerrada = 1
-      connection.query('UPDATE partidas SET cerrada = 1 WHERE id = ?', [id], (err3) => {
+      // 🔒 Si está abierta → verificamos si tiene pesos
+      connection.query('SELECT * FROM pesos WHERE partida_id = ?', [id], (err3, rows) => {
         if (err3) {
-          console.error('❌ Error al cerrar partida:', err3);
-          return res.status(500).json({ error: 'Error al cerrar partida', details: err3 });
+          console.error('❌ Error al verificar pesos:', err3);
+          return res.status(500).json({ error: 'Error al verificar pesos', details: err3 });
         }
-        return res.json({ message: '✅ Partida cerrada correctamente' });
+
+        if (rows.length === 0) {
+          // No tiene pesos → eliminar
+          connection.query('DELETE FROM partidas WHERE id = ?', [id], (err4) => {
+            if (err4) {
+              console.error('❌ Error al borrar partida sin pesos:', err4);
+              return res.status(500).json({ error: 'Error al borrar partida', details: err4 });
+            }
+            return res.json({ message: '🗑️ Partida eliminada porque no tenía pesos' });
+          });
+        } else {
+          // Tiene pesos → cerrar
+          connection.query('UPDATE partidas SET cerrada = 1 WHERE id = ?', [id], (err5) => {
+            if (err5) {
+              console.error('❌ Error al cerrar partida:', err5);
+              return res.status(500).json({ error: 'Error al cerrar partida', details: err5 });
+            }
+            return res.json({ message: '✅ Partida cerrada correctamente' });
+          });
+        }
       });
     }
   });
