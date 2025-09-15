@@ -11,7 +11,10 @@ app.use(express.json());
 
 // Rutas
 const usuarioRoutes = require('./routes/usuario.routes');
+const partidaRoutes = require('./routes/partida.routes');
+
 app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/partidas', partidaRoutes); //endpoint para partidas
 
 // Iniciar servidor
 app.listen(PORT, () => {
