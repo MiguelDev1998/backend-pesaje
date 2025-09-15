@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const connection = require('../db'); // 👈 asegúrate de que tu db.js use module.exports también
+const connection = require('../models/db'); // 👈 asegúrate de que tu db.js use module.exports también
 
 // Crear nueva partida
 router.post('/', (req, res) => {
