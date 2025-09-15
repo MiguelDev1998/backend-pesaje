@@ -55,11 +55,11 @@ router.delete('/:id', (req, res) => {
   });
 });
 
-// Alternar turno (cerrar/abrir) o borrar si no tiene pesos
+// Alternar turno (cerrar ↔ abrir)
 router.put('/:id/cerrar', (req, res) => {
   const { id } = req.params;
 
-  // Verificar estado actual de la partida
+  // Verificar estado actual
   connection.query('SELECT cerrada FROM partidas WHERE id = ?', [id], (err, result) => {
     if (err) {
       console.error('❌ Error al consultar partida:', err);
@@ -73,7 +73,7 @@ router.put('/:id/cerrar', (req, res) => {
     const estadoActual = result[0].cerrada;
 
     if (estadoActual == 1) {
-      // 🔓 Si está cerrada → reabrir
+      // 🔓 Si está cerrada → abrir (cerrada = 0)
       connection.query('UPDATE partidas SET cerrada = 0 WHERE id = ?', [id], (err2) => {
         if (err2) {
           console.error('❌ Error al abrir partida:', err2);
@@ -82,32 +82,13 @@ router.put('/:id/cerrar', (req, res) => {
         return res.json({ message: '🔓 Partida reabierta correctamente' });
       });
     } else {
-      // 🔒 Si está abierta → verificamos si tiene pesos
-      connection.query('SELECT * FROM pesos WHERE partida_id = ?', [id], (err3, rows) => {
+      // 🔒 Si está abierta → cerrar (cerrada = 1)
+      connection.query('UPDATE partidas SET cerrada = 1 WHERE id = ?', [id], (err3) => {
         if (err3) {
-          console.error('❌ Error al verificar pesos:', err3);
-          return res.status(500).json({ error: 'Error al verificar pesos', details: err3 });
+          console.error('❌ Error al cerrar partida:', err3);
+          return res.status(500).json({ error: 'Error al cerrar partida', details: err3 });
         }
-
-        if (rows.length === 0) {
-          // No tiene pesos → eliminar
-          connection.query('DELETE FROM partidas WHERE id = ?', [id], (err4) => {
-            if (err4) {
-              console.error('❌ Error al borrar partida sin pesos:', err4);
-              return res.status(500).json({ error: 'Error al borrar partida', details: err4 });
-            }
-            return res.json({ message: '🗑️ Partida eliminada porque no tenía pesos' });
-          });
-        } else {
-          // Tiene pesos → cerrar
-          connection.query('UPDATE partidas SET cerrada = 1 WHERE id = ?', [id], (err5) => {
-            if (err5) {
-              console.error('❌ Error al cerrar partida:', err5);
-              return res.status(500).json({ error: 'Error al cerrar partida', details: err5 });
-            }
-            return res.json({ message: '✅ Partida cerrada correctamente' });
-          });
-        }
+        return res.json({ message: '✅ Partida cerrada correctamente' });
       });
     }
   });
