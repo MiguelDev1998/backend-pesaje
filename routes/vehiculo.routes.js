@@ -10,19 +10,51 @@ router.post('/', (req, res) => {
     return res.status(400).json({ error: 'Número de placa y piloto son obligatorios' });
   }
 
-  // Insertar vehículo asociado al nombre del piloto
-  const sql = `
-    INSERT INTO vehiculos (numero_placa, tipo, piloto_id)
-    VALUES (?, ?, (SELECT id FROM pilotos WHERE nombre = ? LIMIT 1))
-    ON DUPLICATE KEY UPDATE tipo = VALUES(tipo), piloto_id = (SELECT id FROM pilotos WHERE nombre = ? LIMIT 1)
-  `;
-
-  connection.query(sql, [numero_placa, tipo || null, piloto, piloto], (err, result) => {
+  // Buscar ID del piloto
+  const getPilotoId = 'SELECT id FROM pilotos WHERE nombre = ? LIMIT 1';
+  connection.query(getPilotoId, [piloto], (err, rows) => {
     if (err) {
-      console.error('❌ Error al registrar vehículo:', err);
-      return res.status(500).json({ error: 'Error al registrar vehículo', details: err });
+      console.error('❌ Error al buscar piloto:', err);
+      return res.status(500).json({ error: 'Error al buscar piloto', details: err });
     }
-    res.json({ message: '✅ Vehículo registrado con éxito', id: result.insertId });
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Piloto no encontrado' });
+    }
+
+    const pilotoId = rows[0].id;
+
+    // Insertar o actualizar vehículo
+    const sql = `
+      INSERT INTO vehiculos (numero_placa, tipo, piloto_id)
+      VALUES (?, ?, ?)
+      ON DUPLICATE KEY UPDATE tipo = VALUES(tipo), piloto_id = VALUES(piloto_id)
+    `;
+
+    connection.query(sql, [numero_placa, tipo || null, pilotoId], (err2, result) => {
+      if (err2) {
+        console.error('❌ Error al registrar vehículo:', err2);
+        return res.status(500).json({ error: 'Error al registrar vehículo', details: err2 });
+      }
+
+      // Si fue insertado, usamos insertId
+      if (result.insertId) {
+        return res.json({ message: '✅ Vehículo registrado con éxito', id: result.insertId });
+      } else {
+        // Si fue update → buscar id del vehículo
+        connection.query(
+          'SELECT id FROM vehiculos WHERE numero_placa = ? LIMIT 1',
+          [numero_placa],
+          (err3, rows2) => {
+            if (err3) {
+              console.error('❌ Error al obtener vehículo existente:', err3);
+              return res.status(500).json({ error: 'Error al obtener vehículo existente', details: err3 });
+            }
+            return res.json({ message: 'ℹ️ Vehículo actualizado', id: rows2[0].id });
+          }
+        );
+      }
+    });
   });
 });
 
