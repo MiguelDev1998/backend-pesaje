@@ -11,13 +11,17 @@ router.post('/', (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?)
   `;
 
-  connection.query(sql, [partida, origen, bache, producto, proceso, responsable], (err, result) => {
-    if (err) {
-      console.error('❌ Error al insertar partida:', err);
-      return res.status(500).json({ error: 'Error al crear partida', details: err });
+  connection.query(
+    sql,
+    [partida, origen, bache, producto, proceso, responsable],
+    (err, result) => {
+      if (err) {
+        console.error('❌ Error al insertar partida:', err);
+        return res.status(500).json({ error: 'Error al crear partida', details: err });
+      }
+      res.json({ message: '✅ Partida creada con éxito', id: result.insertId });
     }
-    res.json({ message: '✅ Partida creada con éxito', id: result.insertId });
-  });
+  );
 });
 
 // Listar partidas
@@ -27,7 +31,14 @@ router.get('/', (req, res) => {
       console.error('❌ Error al consultar partidas:', err);
       return res.status(500).json({ error: 'Error al consultar partidas', details: err });
     }
-    res.json(rows);
+
+    // 👇 Normalizar cerrada como boolean (0 → false, 1 → true)
+    const partidas = rows.map(p => ({
+      ...p,
+      cerrada: p.cerrada === 1
+    }));
+
+    res.json(partidas);
   });
 });
 
@@ -35,7 +46,7 @@ router.get('/', (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
 
-  connection.query('DELETE FROM partidas WHERE id = ?', [id], (err, result) => {
+  connection.query('DELETE FROM partidas WHERE id = ?', [id], (err) => {
     if (err) {
       console.error('❌ Error al borrar partida:', err);
       return res.status(500).json({ error: 'Error al borrar partida', details: err });
