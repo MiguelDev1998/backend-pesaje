@@ -6,22 +6,36 @@ const connection = require('../models/db');
 router.post('/', (req, res) => {
   const { partida, origen, bache, producto, proceso, responsable } = req.body;
 
-  const sql = `
-    INSERT INTO partidas (partida, origen, bache, producto, proceso, responsable, cerrada)
-    VALUES (?, ?, ?, ?, ?, ?, 0)
-  `;
-
-  connection.query(
-    sql,
-    [partida, origen, bache, producto, proceso, responsable],
-    (err, result) => {
-      if (err) {
-        console.error('❌ Error al insertar partida:', err);
-        return res.status(500).json({ error: 'Error al crear partida', details: err });
-      }
-      res.json({ message: '✅ Partida creada con éxito', id: result.insertId });
+  // 1️⃣ Verificar si ya existe una partida con el mismo número
+  connection.query('SELECT id FROM partidas WHERE partida = ?', [partida], (err, rows) => {
+    if (err) {
+      console.error('❌ Error al verificar partida existente:', err);
+      return res.status(500).json({ error: 'Error al verificar partida', details: err });
     }
-  );
+
+    if (rows.length > 0) {
+      // 🚫 Ya existe
+      return res.status(400).json({ error: `La partida "${partida}" ya existe en la base de datos` });
+    }
+
+    // 2️⃣ Insertar nueva partida si no existe
+    const sql = `
+      INSERT INTO partidas (partida, origen, bache, producto, proceso, responsable, cerrada)
+      VALUES (?, ?, ?, ?, ?, ?, 0)
+    `;
+
+    connection.query(
+      sql,
+      [partida, origen, bache, producto, proceso, responsable],
+      (err2, result) => {
+        if (err2) {
+          console.error('❌ Error al insertar partida:', err2);
+          return res.status(500).json({ error: 'Error al crear partida', details: err2 });
+        }
+        res.json({ message: '✅ Partida creada con éxito', id: result.insertId });
+      }
+    );
+  });
 });
 
 // Listar partidas
