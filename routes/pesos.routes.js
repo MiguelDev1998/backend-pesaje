@@ -14,7 +14,7 @@ router.post('/', (req, res) => {
   }
 
   const sql = `
-    INSERT INTO pesos (partida_id, piloto_id, vehiculo_id, peso_bruto, tara_nylon, tara_yute, peso_neto, fecha_pesaje)
+    INSERT INTO pesos (partida_id, piloto_id, vehiculo_id, peso_bruto, tara_nylon, tara_yute, peso_neto, fecha_pesaje, cliente_id)
     VALUES ?
   `;
 
@@ -22,11 +22,13 @@ router.post('/', (req, res) => {
     partidaId,
     pilotoId,
     vehiculoId,
+  
     parseFloat(r.pesoBruto),
     parseFloat(r.taraNylon),
     parseFloat(r.taraYute),
     parseFloat(r.pesoNeto),
-    new Date()
+    new Date(),
+    r.clienteId || null
   ]);
 
   connection.query(sql, [values], (err, result) => {
