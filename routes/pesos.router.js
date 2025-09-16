@@ -1,4 +1,3 @@
-// backend/routes/pesos.routes.js
 const express = require('express');
 const router = express.Router();
 const connection = require('../models/db');
@@ -7,12 +6,13 @@ const connection = require('../models/db');
 router.post('/', (req, res) => {
   const { partidaId, pilotoId, vehiculoId, registros } = req.body;
 
-  if (!partidaId || !pilotoId || !vehiculoId || !registros || registros.length === 0) {
+  // Validación fuerte
+  if (partidaId == null || pilotoId == null || vehiculoId == null || !Array.isArray(registros) || registros.length === 0) {
     return res.status(400).json({ error: 'Faltan datos: partidaId, pilotoId, vehiculoId o registros' });
   }
 
   const sql = `
-    INSERT INTO pesos (partida_id, piloto_id, vehiculo_id, peso_bruto, tara_nylon, tara_yute, peso_neto)
+    INSERT INTO pesos (partida_id, piloto_id, vehiculo_id, peso_bruto, tara_nylon, tara_yute, peso_neto, fecha_pesaje)
     VALUES ?
   `;
 
@@ -23,7 +23,8 @@ router.post('/', (req, res) => {
     parseFloat(r.pesoBruto),
     parseFloat(r.taraNylon),
     parseFloat(r.taraYute),
-    parseFloat(r.pesoNeto)
+    parseFloat(r.pesoNeto),
+    new Date()
   ]);
 
   connection.query(sql, [values], (err, result) => {
