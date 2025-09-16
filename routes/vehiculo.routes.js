@@ -5,12 +5,10 @@ const connection = require('../models/db');
 // Registrar vehículo con piloto_id
 router.post('/', (req, res) => {
   const { numero_placa, tipo, piloto_id } = req.body;
+if (!numero_placa || !piloto_id) {
+  return res.status(400).json({ error: 'Número de placa y piloto_id son obligatorios' });
+}
 
-  if (!numero_placa || !piloto_id) {
-    return res
-      .status(400)
-      .json({ error: 'Número de placa y piloto_id son obligatorios' });
-  }
 
   const sql = `
     INSERT INTO vehiculos (numero_placa, tipo, piloto_id)
