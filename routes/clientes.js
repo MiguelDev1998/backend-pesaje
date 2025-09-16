@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db'); // tu conexión a MySQL
+const db = require('../models/db'); // tu conexión a MySQL
 
 // 🔹 Obtener todos los clientes
 router.get('/', (req, res) => {
