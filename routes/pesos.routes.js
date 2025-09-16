@@ -18,7 +18,8 @@ router.post('/', (req, res) => {
   ) {
     return res.status(400).json({ error: 'Faltan datos: partidaId, pilotoId, vehiculoId o registros' });
   }
-
+  
+  
   // 🔹 Consolidar los registros
   let totalBruto = 0;
   let totalNylon = 0;
@@ -31,8 +32,24 @@ router.post('/', (req, res) => {
     totalNylon += parseFloat(r.taraNylon);
     totalYute  += parseFloat(r.taraYute);
     totalNeto  += parseFloat(r.pesoNeto);
-    clienteId = r.clienteId || null; // 👈 tomamos el cliente
+    if (!clienteId && r.clienteId) { // ✅ solo asigna si aún no se ha definido
+    clienteId = r.clienteId;
+  }
   });
+
+// 📌 Debug de lo que se va a insertar
+  console.log("📤 Consolidado listo para guardar:", {
+    partidaId,
+    pilotoId,
+    vehiculoId,
+    totalBruto,
+    totalNylon,
+    totalYute,
+    totalNeto,
+    clienteId
+  });
+
+
 
   const sql = `
     INSERT INTO pesos (
@@ -40,6 +57,7 @@ router.post('/', (req, res) => {
     ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)
   `;
 
+  
   const values = [
     partidaId,
     pilotoId,
