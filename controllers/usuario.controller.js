@@ -1,4 +1,5 @@
 const db = require('../models/db');
+const bcrypt = require('bcrypt');
 
 // Controlador para login
 exports.login = (req, res) => {
@@ -8,19 +9,34 @@ exports.login = (req, res) => {
     return res.status(400).json({ message: 'Usuario y contraseña requeridos' });
   }
 
-  const query = 'SELECT * FROM usuarios WHERE usuario = ? AND contrasena = ?';
-  db.query(query, [usuario, password], (err, results) => {
+  // Buscar usuario en BD
+  const query = 'SELECT * FROM usuarios WHERE usuario = ?';
+  db.query(query, [usuario], async (err, results) => {
     if (err) {
-      console.error('❌ Error al hacer login:', err);
+      console.error('❌ Error en login:', err);
       return res.status(500).json({ message: 'Error interno del servidor' });
     }
 
     if (results.length === 0) {
-      return res.status(401).json({ message: 'Credenciales incorrectas' });
+      return res.status(401).json({ message: 'Usuario no encontrado' });
     }
 
-    // Opcional: aquí podrías generar un token si luego quieres autenticación JWT
+    const usuarioDB = results[0];
 
-    res.json({ message: 'Login exitoso', usuario: results[0] });
+    // ✅ Comparar contraseñas con bcrypt
+    const match = await bcrypt.compare(password, usuarioDB.contrasena);
+    if (!match) {
+      return res.status(401).json({ message: 'Contraseña incorrecta' });
+    }
+
+    // 🔹 Solo devolvemos datos necesarios (no la contraseña)
+    res.json({
+      message: '✅ Login exitoso',
+      usuario: {
+        id: usuarioDB.id,
+        usuario: usuarioDB.usuario,
+        nombre: usuarioDB.nombre
+      }
+    });
   });
 };
