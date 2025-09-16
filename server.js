@@ -14,8 +14,10 @@ const usuarioRoutes = require('./routes/usuario.routes');
 const partidaRoutes = require('./routes/partida.routes');
 const pilotoRoutes = require('./routes/piloto.routes');
 const vehiculoRoutes = require('./routes/vehiculo.routes');
+const pesosRoutes = require('./routes/pesos.routes');
 
 
+app.use('/api/pesos', pesosRoutes);
 app.use('/api/vehiculos', vehiculoRoutes);
 app.use('/api/pilotos', pilotoRoutes);
 app.use('/api/usuarios', usuarioRoutes);
