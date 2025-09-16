@@ -37,23 +37,39 @@ router.post('/', (req, res) => {
         return res.status(500).json({ error: 'Error al registrar vehículo', details: err2 });
       }
 
-      // Si fue insertado, usamos insertId
-      if (result.insertId) {
-        return res.json({ message: '✅ Vehículo registrado con éxito', id: result.insertId });
-      } else {
-        // Si fue update → buscar id del vehículo
-        connection.query(
-          'SELECT id FROM vehiculos WHERE numero_placa = ? LIMIT 1',
-          [numero_placa],
-          (err3, rows2) => {
-            if (err3) {
-              console.error('❌ Error al obtener vehículo existente:', err3);
-              return res.status(500).json({ error: 'Error al obtener vehículo existente', details: err3 });
-            }
-            return res.json({ message: 'ℹ️ Vehículo actualizado', id: rows2[0].id });
-          }
-        );
+      // ✅ Si fue insertado, devolvemos insertId
+      if (result.insertId && result.insertId > 0) {
+        return res.json({
+          message: '✅ Vehículo registrado con éxito',
+          id: result.insertId
+        });
       }
+
+      // ✅ Si fue actualización, buscamos el id existente
+      connection.query(
+        'SELECT id FROM vehiculos WHERE numero_placa = ? LIMIT 1',
+        [numero_placa],
+        (err3, rows2) => {
+          if (err3) {
+            console.error('❌ Error al obtener vehículo existente:', err3);
+            return res.status(500).json({
+              error: 'Error al obtener vehículo existente',
+              details: err3
+            });
+          }
+
+          if (rows2.length === 0) {
+            return res
+              .status(404)
+              .json({ error: 'Vehículo no encontrado después de actualizar' });
+          }
+
+          return res.json({
+            message: 'ℹ️ Vehículo actualizado',
+            id: rows2[0].id
+          });
+        }
+      );
     });
   });
 });
