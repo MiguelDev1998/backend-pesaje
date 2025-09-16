@@ -25,16 +25,15 @@ router.post('/', (req, res) => {
   let totalNylon = 0;
   let totalYute = 0;
   let totalNeto = 0;
-  let clienteId = null;
+  let clienteId = registros[0].clienteId || null;  // 👈 más seguro
+
 
   registros.forEach(r => {
     totalBruto += parseFloat(r.pesoBruto);
     totalNylon += parseFloat(r.taraNylon);
     totalYute  += parseFloat(r.taraYute);
     totalNeto  += parseFloat(r.pesoNeto);
-    if (!clienteId && r.clienteId) { // ✅ solo asigna si aún no se ha definido
-    clienteId = r.clienteId;
-  }
+    
   });
 
 // 📌 Debug de lo que se va a insertar
