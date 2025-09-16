@@ -6,6 +6,8 @@ const connection = require('../models/db');
 router.post('/', (req, res) => {
   const { partidaId, pilotoId, vehiculoId, registros } = req.body;
 
+  console.log("📥 Body recibido:", req.body);
+
   // Validación fuerte
   if (partidaId == null || pilotoId == null || vehiculoId == null || !Array.isArray(registros) || registros.length === 0) {
     return res.status(400).json({ error: 'Faltan datos: partidaId, pilotoId, vehiculoId o registros' });
