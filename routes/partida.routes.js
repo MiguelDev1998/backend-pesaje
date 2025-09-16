@@ -7,9 +7,10 @@ router.post('/', (req, res) => {
   const { partida, origen, bache, producto, proceso, responsable } = req.body;
 
   const sql = `
-    INSERT INTO partidas (partida, origen, bache, producto, proceso, responsable, cerrada)
-    VALUES (?, ?, ?, ?, ?, ?, 0)
-  `;
+  INSERT INTO partidas (partida, origen, bache, producto, proceso, responsable, fecha, cerrada)
+  VALUES (?, ?, ?, ?, ?, ?, NOW(), 0)
+`;
+
 
   connection.query(
     sql,
