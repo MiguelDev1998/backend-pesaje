@@ -47,14 +47,23 @@ router.get('/', (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
 
-  connection.query('DELETE FROM partidas WHERE id = ?', [id], (err) => {
+  const sql = 'DELETE FROM partidas WHERE id = ?';
+
+  connection.query(sql, [id], (err, result) => {
     if (err) {
       console.error('❌ Error al borrar partida:', err);
       return res.status(500).json({ error: 'Error al borrar partida', details: err });
     }
-    res.json({ message: '🗑️ Partida eliminada correctamente' });
+
+    if (result.affectedRows === 0) {
+      // No se encontró ninguna partida con ese id
+      return res.status(404).json({ error: 'No existe la partida con ese ID' });
+    }
+
+    res.json({ message: '🗑️ Partida eliminada correctamente', deletedId: id });
   });
 });
+
 
 // Alternar turno (cerrar ↔ abrir)
 router.put('/:id/cerrar', (req, res) => {
