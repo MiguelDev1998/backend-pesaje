@@ -18,4 +18,36 @@ router.get('/total-cafe', (req, res) => {
   });
 });
 
+// 🔹 Café entregado por mes
+router.get('/cafe-por-mes', (req, res) => {
+  const query = `
+    SELECT 
+      MONTH(fecha_pesaje) AS mes, 
+      SUM(peso_neto) AS total
+    FROM pesos
+    GROUP BY mes
+    ORDER BY mes;
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('❌ Error al obtener datos por mes:', err);
+      return res.status(500).json({ error: 'Error al obtener datos por mes' });
+    }
+
+    // 🔹 Formatear datos para el frontend
+    const labels = results.map(r => `Mes ${r.mes}`);
+    const data = results.map(r => parseFloat(r.total));
+
+    res.json({ labels, data });
+  });
+});
+
+module.exports = router;
+
+
+
+
+
+
 module.exports = router;
