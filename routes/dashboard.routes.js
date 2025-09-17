@@ -48,6 +48,33 @@ router.get('/cafe-por-mes', (req, res) => {
   });
 });
 
+// 🔹 Total café del día (fecha actual)
+router.get('/total-dia', (req, res) => {
+  const query = `
+    SELECT SUM(peso_neto) AS total
+    FROM pesos
+    WHERE DATE(fecha_pesaje) = CURDATE();
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('❌ Error al obtener total del día:', err);
+      return res.status(500).json({ error: 'Error al obtener total del día' });
+    }
+
+    const total = results[0]?.total ?? 0;
+    res.json({ total });
+  });
+});
+
+
+
+
+
+
+
+
+
 module.exports = router;
 
 
