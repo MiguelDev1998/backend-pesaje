@@ -35,8 +35,13 @@ router.get('/cafe-por-mes', (req, res) => {
       return res.status(500).json({ error: 'Error al obtener datos por mes' });
     }
 
-    // 🔹 Formatear datos para el frontend
-    const labels = results.map(r => `Mes ${r.mes}`);
+    const meses = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+
+    // Mapear resultados a nombres de meses
+    const labels = results.map(r => meses[r.mes - 1]);
     const data = results.map(r => parseFloat(r.total));
 
     res.json({ labels, data });
@@ -50,4 +55,4 @@ module.exports = router;
 
 
 
-module.exports = router;
+
