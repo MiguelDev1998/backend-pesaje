@@ -12,7 +12,9 @@ router.get('/total-cafe', (req, res) => {
       return res.status(500).json({ error: 'Error al obtener datos' });
     }
 
-    res.json({ total: results[0].total || 0 });
+    const total = results[0]?.total ?? 0;
+    res.json({ total });
+
   });
 });
 
