@@ -2,21 +2,24 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
 
-// 🔹 Total de café entregado (global)
-router.get('/total-cafe', (req, res) => {
-  const query = 'SELECT SUM(peso_neto) AS total FROM pesos';
+// 📊 Café entregado por tipo (según producto en partidas)
+router.get('/cafe-por-tipo', (req, res) => {
+  const query = `
+    SELECT pa.producto AS tipo, SUM(p.peso_neto) AS total
+    FROM pesos p
+    JOIN partidas pa ON p.partida_id = pa.id
+    GROUP BY pa.producto;
+  `;
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('❌ Error al obtener datos:', err);
+      console.error('❌ Error al obtener café por tipo:', err);
       return res.status(500).json({ error: 'Error al obtener datos' });
     }
-
-    const total = results[0]?.total ?? 0;
-    res.json({ total });
-
+    res.json(results);
   });
 });
+
 
 // 🔹 Café entregado por mes
 router.get('/cafe-por-mes', (req, res) => {
