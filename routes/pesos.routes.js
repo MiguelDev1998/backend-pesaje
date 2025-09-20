@@ -6,7 +6,7 @@ const connection = require('../models/db');
 router.post('/', (req, res) => {
   const { partidaId, pilotoId, vehiculoId, registros } = req.body;
 
-  console.log("📥 Body recibido:", req.body);
+  console.log("Body recibido:", req.body);
 
   // Validación fuerte
   if (
@@ -20,12 +20,12 @@ router.post('/', (req, res) => {
   }
   
   
-  // 🔹 Consolidar los registros
+  // Consolidar los registros
   let totalBruto = 0;
   let totalNylon = 0;
   let totalYute = 0;
   let totalNeto = 0;
-  let clienteId = registros[0].clienteId || null;  // 👈 más seguro
+  let clienteId = registros[0].clienteId || null;  
 
 
   registros.forEach(r => {
@@ -36,8 +36,8 @@ router.post('/', (req, res) => {
     
   });
 
-// 📌 Debug de lo que se va a insertar
-  console.log("📤 Consolidado listo para guardar:", {
+// Debug de lo que se va a insertar
+  console.log("Consolidado listo para guardar:", {
     partidaId,
     pilotoId,
     vehiculoId,
@@ -70,14 +70,14 @@ router.post('/', (req, res) => {
 
   connection.query(sql, values, (err, result) => {
     if (err) {
-      console.error('❌ Error al guardar pesos:', err);
+      console.error('Error al guardar pesos:', err);
       return res.status(500).json({ error: 'Error al guardar pesos', details: err });
     }
-    res.json({ message: '✅ Pesos consolidados guardados con éxito', id: result.insertId });
+    res.json({ message: 'Pesos consolidados guardados con éxito', id: result.insertId });
   });
 });
 
-// Listar pesos con JOINs
+// Listar pesos 
 router.get('/detalle/:partidaId', (req, res) => {
   const { partidaId } = req.params;
 
@@ -95,7 +95,7 @@ router.get('/detalle/:partidaId', (req, res) => {
 
   connection.query(sql, [partidaId], (err, rows) => {
     if (err) {
-      console.error('❌ Error al obtener detalle de pesos:', err);
+      console.error('Error al obtener detalle de pesos:', err);
       return res.status(500).json({ error: 'Error al obtener detalle de pesos', details: err });
     }
     res.json(rows);

@@ -18,27 +18,27 @@ if (!numero_placa || !piloto_id) {
 
   connection.query(sql, [numero_placa, tipo || null, piloto_id], (err, result) => {
     if (err) {
-      console.error('❌ Error al registrar vehículo:', err);
+      console.error('Error al registrar vehículo:', err);
       return res
         .status(500)
         .json({ error: 'Error al registrar vehículo', details: err });
     }
 
-    // ✅ Si fue insertado, devolvemos insertId
+    // Si fue insertado, insertId
     if (result.insertId && result.insertId > 0) {
       return res.json({
-        message: '✅ Vehículo registrado con éxito',
+        message: 'Vehículo registrado con éxito',
         id: result.insertId,
       });
     }
 
-    // ✅ Si fue actualización, buscamos el id existente
+    //Si fue actualización, buscamos el id existente
     connection.query(
       'SELECT id FROM vehiculos WHERE numero_placa = ? LIMIT 1',
       [numero_placa],
       (err2, rows2) => {
         if (err2) {
-          console.error('❌ Error al obtener vehículo existente:', err2);
+          console.error('Error al obtener vehículo existente:', err2);
           return res.status(500).json({
             error: 'Error al obtener vehículo existente',
             details: err2,
@@ -52,7 +52,7 @@ if (!numero_placa || !piloto_id) {
         }
 
         return res.json({
-          message: 'ℹ️ Vehículo actualizado',
+          message: 'Vehículo actualizado',
           id: rows2[0].id,
         });
       }
@@ -69,7 +69,7 @@ router.get('/', (req, res) => {
   `;
   connection.query(sql, (err, rows) => {
     if (err) {
-      console.error('❌ Error al consultar vehículos:', err);
+      console.error('Error al consultar vehículos:', err);
       return res
         .status(500)
         .json({ error: 'Error al consultar vehículos', details: err });

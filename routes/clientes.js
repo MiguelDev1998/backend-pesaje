@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../models/db'); // tu conexión a MySQL
+const db = require('../models/db'); 
 
-// 🔹 Obtener todos los clientes
+// para obtener todos los clientes
 router.get('/', (req, res) => {
   db.query('SELECT * FROM clientes', (err, results) => {
     if (err) {
-      console.error('❌ Error al obtener clientes:', err);
+      console.error('Error al obtener clientes:', err);
       res.status(500).json({ error: 'Error al obtener clientes' });
     } else {
       res.json(results);
@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
   });
 });
 
-// 🔹 Insertar cliente nuevo
+// insertar cliente nuevo
 router.post('/', (req, res) => {
   const { primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, dpi, direccion, telefono, correo } = req.body;
   
@@ -23,10 +23,10 @@ router.post('/', (req, res) => {
                
   db.query(sql, [primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, dpi, direccion, telefono, correo], (err, result) => {
     if (err) {
-      console.error('❌ Error al insertar cliente:', err);
+      console.error('Error al insertar cliente:', err);
       res.status(500).json({ error: 'Error al insertar cliente' });
     } else {
-      res.status(201).json({ id: result.insertId, message: '✅ Cliente agregado con éxito' });
+      res.status(201).json({ id: result.insertId, message: 'Cliente agregado correctamente' });
     }
   });
 });

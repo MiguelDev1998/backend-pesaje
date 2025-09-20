@@ -6,7 +6,7 @@ const connection = require('../models/db');
 router.get('/', (req, res) => {
   connection.query('SELECT id, nombre FROM pilotos', (err, rows) => {
     if (err) {
-      console.error('❌ Error al consultar pilotos:', err);
+      console.error('Error al consultar pilotos:', err);
       return res.status(500).json({ error: 'Error al consultar pilotos', details: err });
     }
     res.json(rows);

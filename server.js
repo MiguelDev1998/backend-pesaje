@@ -18,16 +18,16 @@ const pesosRoutes = require('./routes/pesos.routes');
 const clientesRoutes = require('./routes/clientes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 
-
+//endpoint 
 app.use('/dashboard', dashboardRoutes);
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/pesos', pesosRoutes);
 app.use('/api/vehiculos', vehiculoRoutes);
 app.use('/api/pilotos', pilotoRoutes);
 app.use('/api/usuarios', usuarioRoutes);
-app.use('/api/partidas', partidaRoutes); //endpoint para partidas
+app.use('/api/partidas', partidaRoutes); 
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`✅ Servidor backend escuchando en el puerto ${PORT}`);
+  console.log(`Servidor backend escuchando en el puerto ${PORT}`);
 });

@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
 
-// 🔹 Total de café entregado (global)
+// Total de café entregado (global)
 router.get('/total-cafe', (req, res) => {
   const query = 'SELECT SUM(peso_neto) AS total FROM pesos';
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('❌ Error al obtener datos:', err);
+      console.error('Error al obtener datos:', err);
       return res.status(500).json({ error: 'Error al obtener datos' });
     }
 
@@ -19,7 +19,7 @@ router.get('/total-cafe', (req, res) => {
 
 });
 
-// 🔹 Café entregado por mes
+// Café entregado por mes
 router.get('/cafe-por-mes', (req, res) => {
   const query = `
     SELECT 
@@ -32,7 +32,7 @@ router.get('/cafe-por-mes', (req, res) => {
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('❌ Error al obtener datos por mes:', err);
+      console.error('Error al obtener datos por mes:', err);
       return res.status(500).json({ error: 'Error al obtener datos por mes' });
     }
 
@@ -49,7 +49,7 @@ router.get('/cafe-por-mes', (req, res) => {
   });
 });
 
-// 🔹 Total café del día (fecha actual)
+//Total café del día (fecha actual)
 router.get('/total-dia', (req, res) => {
   const query = `
     SELECT SUM(peso_neto) AS total
@@ -59,7 +59,7 @@ router.get('/total-dia', (req, res) => {
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('❌ Error al obtener total del día:', err);
+      console.error('Error al obtener total del día:', err);
       return res.status(500).json({ error: 'Error al obtener total del día' });
     }
 
@@ -68,7 +68,7 @@ router.get('/total-dia', (req, res) => {
   });
 });
 
-// 📊 Café entregado por tipo (según producto en partidas)
+// Café entregado por tipo (según producto en partidas)
 router.get('/cafe-por-tipo', (req, res) => {
   const query = `
     SELECT pa.producto AS tipo, SUM(p.peso_neto) AS total
@@ -79,7 +79,7 @@ router.get('/cafe-por-tipo', (req, res) => {
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('❌ Error al obtener café por tipo:', err);
+      console.error('Error al obtener café por tipo:', err);
       return res.status(500).json({ error: 'Error al obtener datos' });
     }
     res.json(results);
