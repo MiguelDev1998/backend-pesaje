@@ -53,7 +53,7 @@ router.get('/cafe-por-mes', (req, res) => {
 router.get('/total-dia', (req, res) => {
   const query = `
     SELECT SUM(peso_neto) AS total
-    FROM pesos
+    FROM peso
     WHERE DATE(fecha_pesaje) = CURDATE();
   `;
 
@@ -72,8 +72,8 @@ router.get('/total-dia', (req, res) => {
 router.get('/cafe-por-tipo', (req, res) => {
   const query = `
     SELECT pa.producto AS tipo, SUM(p.peso_neto) AS total
-    FROM pesos p
-    JOIN partidas pa ON p.partida_id = pa.id
+    FROM peso p
+    JOIN partida pa ON p.partida_id = pa.id
     GROUP BY pa.producto;
   `;
 

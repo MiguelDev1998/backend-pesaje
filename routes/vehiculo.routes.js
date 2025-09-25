@@ -11,7 +11,7 @@ if (!numero_placa || !piloto_id) {
 
 
   const sql = `
-    INSERT INTO vehiculos (numero_placa, tipo, piloto_id)
+    INSERT INTO vehiculo (numero_placa, tipo, piloto_id)
     VALUES (?, ?, ?)
     ON DUPLICATE KEY UPDATE tipo = VALUES(tipo), piloto_id = VALUES(piloto_id)
   `;
@@ -34,7 +34,7 @@ if (!numero_placa || !piloto_id) {
 
     //Si fue actualización, buscamos el id existente
     connection.query(
-      'SELECT id FROM vehiculos WHERE numero_placa = ? LIMIT 1',
+      'SELECT id FROM vehiculo WHERE numero_placa = ? LIMIT 1',
       [numero_placa],
       (err2, rows2) => {
         if (err2) {
@@ -64,7 +64,7 @@ if (!numero_placa || !piloto_id) {
 router.get('/', (req, res) => {
   const sql = `
     SELECT v.id, v.numero_placa, v.tipo, p.nombre AS piloto, v.creado_en
-    FROM vehiculos v
+    FROM vehiculo v
     LEFT JOIN pilotos p ON v.piloto_id = p.id
   `;
   connection.query(sql, (err, rows) => {

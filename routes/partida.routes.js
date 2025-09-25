@@ -108,7 +108,7 @@ router.put('/:id/cerrar', (req, res) => {
 // Obtener partida por ID
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  connection.query('SELECT id, partida, estado, fecha FROM partidas WHERE id = ?', [id], (err, rows) => {
+  connection.query('SELECT id, partida, estado, fecha FROM partida WHERE id = ?', [id], (err, rows) => {
     if (err) {
       console.error('Error al obtener partida por id:', err);
       return res.status(500).json({ error: 'Error al obtener partida' });

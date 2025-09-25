@@ -51,7 +51,7 @@ router.post('/', (req, res) => {
 
 
   const sql = `
-    INSERT INTO pesos (
+    INSERT INTO peso (
       partida_id, piloto_id, vehiculo_id, peso_bruto, tara_nylon, tara_yute, peso_neto, fecha_pesaje, cliente_id
     ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)
   `;
@@ -70,8 +70,8 @@ router.post('/', (req, res) => {
 
   connection.query(sql, values, (err, result) => {
     if (err) {
-      console.error('Error al guardar pesos:', err);
-      return res.status(500).json({ error: 'Error al guardar pesos', details: err });
+      console.error('Error al guardar peso:', err);
+      return res.status(500).json({ error: 'Error al guardar peso', details: err });
     }
     res.json({ message: 'Pesos consolidados guardados con éxito', id: result.insertId });
   });
@@ -84,19 +84,19 @@ router.get('/detalle/:partidaId', (req, res) => {
   const sql = `
     SELECT p.id, p.peso_bruto, p.tara_nylon, p.tara_yute, p.peso_neto, p.fecha_pesaje,
            v.numero_placa, pil.nombre AS piloto, pa.partida, c.primer_nombre, c.primer_apellido
-    FROM pesos p
-    INNER JOIN vehiculos v ON p.vehiculo_id = v.id
-    INNER JOIN pilotos pil ON p.piloto_id = pil.id
-    INNER JOIN partidas pa ON p.partida_id = pa.id
-    LEFT JOIN clientes c ON p.cliente_id = c.id
+    FROM peso p
+    INNER JOIN vehiculo v ON p.vehiculo_id = v.id
+    INNER JOIN piloto pil ON p.piloto_id = pil.id
+    INNER JOIN partida pa ON p.partida_id = pa.id
+    LEFT JOIN cliente c ON p.cliente_id = c.id
     WHERE p.partida_id = ?
     ORDER BY p.fecha_pesaje DESC
   `;
 
   connection.query(sql, [partidaId], (err, rows) => {
     if (err) {
-      console.error('Error al obtener detalle de pesos:', err);
-      return res.status(500).json({ error: 'Error al obtener detalle de pesos', details: err });
+      console.error('Error al obtener detalle de peso:', err);
+      return res.status(500).json({ error: 'Error al obtener detalle de peso', details: err });
     }
     res.json(rows);
   });

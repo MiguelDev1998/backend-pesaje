@@ -4,10 +4,10 @@ const db = require('../models/db');
 
 // para obtener todos los clientes
 router.get('/', (req, res) => {
-  db.query('SELECT * FROM clientes', (err, results) => {
+  db.query('SELECT * FROM cliente', (err, results) => {
     if (err) {
-      console.error('Error al obtener clientes:', err);
-      res.status(500).json({ error: 'Error al obtener clientes' });
+      console.error('Error al obtener cliente:', err);
+      res.status(500).json({ error: 'Error al obtener cliente' });
     } else {
       res.json(results);
     }
@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   const { primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, dpi, direccion, telefono, correo } = req.body;
   
-  const sql = `INSERT INTO clientes (primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, dpi, direccion, telefono, correo)
+  const sql = `INSERT INTO cliente (primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, dpi, direccion, telefono, correo)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
                
   db.query(sql, [primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, dpi, direccion, telefono, correo], (err, result) => {
