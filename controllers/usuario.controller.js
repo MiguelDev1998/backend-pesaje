@@ -10,7 +10,7 @@ exports.login = (req, res) => {
   }
 
   // B usuario en la base de datos
-  const query = 'SELECT * FROM usuarios WHERE usuario = ?';
+  const query = 'SELECT * FROM usuario WHERE usuario = ?';
   db.query(query, [usuario], async (err, results) => {
     if (err) {
       console.error('Error en login:', err);
