@@ -4,7 +4,7 @@ const db = require('../models/db');
 
 // Total de café entregado (global)
 router.get('/total-cafe', (req, res) => {
-  const query = 'SELECT SUM(peso_neto) AS total FROM pesos';
+  const query = 'SELECT SUM(peso_neto) AS total FROM peso';
 
   db.query(query, (err, results) => {
     if (err) {
@@ -25,7 +25,7 @@ router.get('/cafe-por-mes', (req, res) => {
     SELECT 
       MONTH(fecha_pesaje) AS mes, 
       SUM(peso_neto) AS total
-    FROM pesos
+    FROM peso
     GROUP BY mes
     ORDER BY mes;
   `;
