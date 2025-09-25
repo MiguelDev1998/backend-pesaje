@@ -7,7 +7,7 @@ router.post('/', (req, res) => {
   const { partida, origen, bache, producto, proceso, responsable } = req.body;
 
   const sql = `
-  INSERT INTO partidas (partida, origen, bache, producto, proceso, responsable, fecha, cerrada)
+  INSERT INTO partida (partida, origen, bache, producto, proceso, responsable, fecha, cerrada)
   VALUES (?, ?, ?, ?, ?, ?, NOW(), 0)
 `;
 
@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
 
 // Listar partidas
 router.get('/', (req, res) => {
-  connection.query('SELECT * FROM partidas', (err, rows) => {
+  connection.query('SELECT * FROM partida', (err, rows) => {
     if (err) {
       console.error('Error al consultar partidas:', err);
       return res.status(500).json({ error: 'Error al consultar partidas', details: err });
@@ -47,7 +47,7 @@ router.get('/', (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
 
-  const sql = 'DELETE FROM partidas WHERE id = ?';
+  const sql = 'DELETE FROM partida WHERE id = ?';
 
   connection.query(sql, [id], (err, result) => {
     if (err) {
@@ -71,7 +71,7 @@ router.put('/:id/cerrar', (req, res) => {
   const { id } = req.params;
 
   // Verificar estado actual
-  connection.query('SELECT cerrada FROM partidas WHERE id = ?', [id], (err, result) => {
+  connection.query('SELECT cerrada FROM partida WHERE id = ?', [id], (err, result) => {
     if (err) {
       console.error('Error al consultar partida:', err);
       return res.status(500).json({ error: 'Error al consultar partida', details: err });
@@ -85,7 +85,7 @@ router.put('/:id/cerrar', (req, res) => {
 
     if (estadoActual == 1) {
       // Si está cerrada -> abrir (cerrada = 0)
-      connection.query('UPDATE partidas SET cerrada = 0 WHERE id = ?', [id], (err2) => {
+      connection.query('UPDATE partida SET cerrada = 0 WHERE id = ?', [id], (err2) => {
         if (err2) {
           console.error('Error al abrir partida:', err2);
           return res.status(500).json({ error: 'Error al abrir partida', details: err2 });
@@ -94,7 +94,7 @@ router.put('/:id/cerrar', (req, res) => {
       });
     } else {
       // Si está abierta -> cerrar (cerrada = 1)
-      connection.query('UPDATE partidas SET cerrada = 1 WHERE id = ?', [id], (err3) => {
+      connection.query('UPDATE partida SET cerrada = 1 WHERE id = ?', [id], (err3) => {
         if (err3) {
           console.error('Error al cerrar partida:', err3);
           return res.status(500).json({ error: 'Error al cerrar partida', details: err3 });
