@@ -4,7 +4,7 @@ const connection = require('../models/db');
 const pilotoController = require('../controllers/piloto.controller');
 
 
-// Listar todos los pilotos
+/*Listar todos los pilotos
 router.get('/', (req, res) => {
   connection.query('SELECT id, nombre FROM piloto', (err, rows) => {
     if (err) {
@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
     }
     res.json(rows);
   });
-});
+});*/
 
 // Rutas para CRUD de pilotos
 router.get('/', pilotoController.listar);
