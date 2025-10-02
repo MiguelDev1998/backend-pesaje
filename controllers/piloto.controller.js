@@ -17,10 +17,11 @@ exports.obtener = (req, res) => {
 };
 
 exports.crear = (req, res) => {
+    console.log("📥 Body recibido:", req.body);
   const data = req.body;
   Piloto.create(data, (err, result) => {
     if (err) return res.status(500).json({ error: err });
-    res.json({ message: '✅ Piloto agregado correctamente', id: result.insertId });
+    res.json({ message: 'Piloto agregado correctamente', id: result.insertId });
   });
 };
 
