@@ -15,7 +15,7 @@ const partidaRoutes = require('./routes/partida.routes');
 const pilotoRoutes = require('./routes/piloto.routes');
 const vehiculoRoutes = require('./routes/vehiculo.routes');
 const pesosRoutes = require('./routes/pesos.routes');
-const clientesRoutes = require('./routes/clientes');
+const clientesRoutes = require('./routes/cliente.router');
 const dashboardRoutes = require('./routes/dashboard.routes');
 
 
