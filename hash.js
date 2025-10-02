@@ -6,5 +6,5 @@ async function generarHash(password) {
   console.log(`Contraseña: ${password} → Hash: ${hash}`);
 }
 
-generarHash('');  // ingresar la contraseña que se va a hashear
-generarHash(''); // ingresar la contraseña que se va a hashear
+generarHash('ad1235');  // contrase;a para hash
+

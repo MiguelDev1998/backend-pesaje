@@ -17,6 +17,8 @@ const vehiculoRoutes = require('./routes/vehiculo.routes');
 const pesosRoutes = require('./routes/pesos.routes');
 const clientesRoutes = require('./routes/clientes');
 const dashboardRoutes = require('./routes/dashboard.routes');
+const pilotoRoutes = require('./routes/piloto.routes');
+
 
 //endpoint 
 app.use('/dashboard', dashboardRoutes);
@@ -26,6 +28,7 @@ app.use('/api/vehiculos', vehiculoRoutes);
 app.use('/api/pilotos', pilotoRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/partidas', partidaRoutes); 
+app.use('/api/pilotos', pilotoRoutes);
 
 // Iniciar servidor
 app.listen(PORT, () => {
