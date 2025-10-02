@@ -3,10 +3,15 @@ const Piloto = require('../models/piloto.model');
 
 exports.listar = (req, res) => {
   Piloto.getAll((err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json(results);
+    if (err) {
+      console.error("Error al listar pilotos:", err);
+      return res.status(500).json({ error: err });
+    }
+    console.log("Datos desde DB:", results);
+    res.json(results); 
   });
 };
+
 
 exports.obtener = (req, res) => {
   const { id } = req.params;
