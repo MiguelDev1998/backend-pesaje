@@ -5,7 +5,7 @@ exports.listar = (req, res) => {
   const query = `
     SELECT 
       r.id AS recibo_id,
-      r.partida AS numero_partida,
+      pa.partida AS numero_partida,
       r.fecha,
       CONCAT('PROV-', LPAD(r.cliente_id, 3, '0')) AS codigo,
       CONCAT(c.primer_nombre, ' ', c.primer_apellido) AS proveedor,
