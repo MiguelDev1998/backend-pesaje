@@ -13,7 +13,8 @@ exports.listar = (req, res) => {
 
     -- 🔹 Datos del piloto y transporte (vehículo)
     pi.nombre AS piloto,
-    v.placa AS transporte,
+    v.numero_placa AS transporte,
+
 
     -- 🔹 Datos de la partida
     pa.tipo_cafe AS tipo,
