@@ -17,6 +17,8 @@ const vehiculoRoutes = require('./routes/vehiculo.routes');
 const pesosRoutes = require('./routes/pesos.routes');
 const clientesRoutes = require('./routes/cliente.router');
 const dashboardRoutes = require('./routes/dashboard.routes');
+const reciboRoutes = require('./routes/recibo.routes');
+
 
 
 
@@ -28,7 +30,7 @@ app.use('/api/vehiculos', vehiculoRoutes);
 app.use('/api/pilotos', pilotoRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/partidas', partidaRoutes); 
-
+app.use('/recibos', reciboRoutes);
 
 // Iniciar servidor
 app.listen(PORT, () => {
