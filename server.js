@@ -30,7 +30,7 @@ app.use('/api/vehiculos', vehiculoRoutes);
 app.use('/api/pilotos', pilotoRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/partidas', partidaRoutes); 
-app.use('/recibos', reciboRoutes);
+app.use('/api/recibos', reciboRoutes);
 
 // Iniciar servidor
 app.listen(PORT, () => {
