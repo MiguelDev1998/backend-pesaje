@@ -17,8 +17,9 @@ exports.listar = (req, res) => {
 
 
     -- 🔹 Datos de la partida
-    pa.tipo_cafe AS tipo,
-    pa.cosecha AS cosecha,
+   IFNULL(pa.producto, 'MADURO') AS tipo,
+    '2024-2025' AS cosecha,
+
 
     -- 🔹 Datos del peso (tara y kilos)
     p.peso_bruto,
